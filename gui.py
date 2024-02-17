@@ -1,4 +1,4 @@
-# РАБОЧАЯ ВЕРСИЯ
+# РАБОЧАЯ ВЕРСИЯ ДЛЯ ОДНОГО ГРАФИКА
 
 import sys
 from PyQt6.QtWidgets import *
@@ -7,9 +7,11 @@ from PyQt6.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import *
 import pandas as pd
+import matplotlib.ticker as  ticker
 
 
-class DataVisualizer(QMainWindow):
+
+class DataVisualizer(QDialog):
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -19,7 +21,7 @@ class DataVisualizer(QMainWindow):
 
 
     def initUI(self):
-        self.setWindowTitle("Визуализатор данных")
+        self.setWindowTitle("Линейный одиночный ")
         self.setGeometry(100, 100, 1420, 900)
         # self.setStyleSheet("background-color: black")
 
@@ -46,11 +48,11 @@ class DataVisualizer(QMainWindow):
         button2.setGeometry(700, 750, 220, 100)
         button2.clicked.connect(self.loadData)
 
-        button3 = QPushButton("Сохранить график", self)
+        button3 = QPushButton("save⇩", self)
         button3.setStyleSheet(""" *{background-color: grey; color: black;}""")
         button3.setGeometry(30,150,48,48)
-        icon = QIcon('black-save-icon.png')     #Исправить сделать так чтоб картинка работала на след стадии
-        button3.setIcon(icon)
+        # icon = QIcon('save_sign_icon_flat_contrast_sketch_6919593.jpg')     #Исправить сделать так чтоб картинка работала на след стадии
+        # button3.setIcon(icon)
         button3.clicked.connect(self.saveData)
 
 
@@ -83,6 +85,7 @@ class DataVisualizer(QMainWindow):
             y = self.data['Y']
 
             self.graphics_view.plot(x, y, line_color=self.line_color)
+            print(x, y)
 
     def loadData(self):
         options = QFileDialog.Option.ReadOnly
@@ -125,6 +128,12 @@ class MatplotlibWidget(FigureCanvas):
         self.axes.set_xlabel('X-ось')
         self.axes.set_ylabel('Y-ось')
         self.axes.set_title('Ваш  график')
+        # self.axes.legend()
+
+        self.axes.yaxis.set_major_locator(ticker.MultipleLocator(1))
+        self.axes.xaxis.set_major_locator(ticker.MultipleLocator(1))
+
+
         self.axes.grid(True)
         self.draw()
 
