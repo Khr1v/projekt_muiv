@@ -1,4 +1,5 @@
 #РАБОЧАЯ ВЕРСИЯ ДЛЯ ГРАФИКОВ
+орп
 
 import sys
 from PyQt6.QtWidgets import *
@@ -7,7 +8,7 @@ from PyQt6.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import *
 import pandas as pd
-import matplotlib.ticker as ticker
+import matplotlib.ticker as tickerа 
 
 
 class DataVisualizer2(QDialog):
