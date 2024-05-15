@@ -1,5 +1,5 @@
 #РАБОЧАЯ ВЕРСИЯ ДЛЯ ГРАФИКОВ
-орп
+
 
 import sys
 from PyQt6.QtWidgets import *
