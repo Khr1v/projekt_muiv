@@ -1,6 +1,5 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QPushButton
 from PyQt6 import QtCore
-from gui import DataVisualizer
 from venv3.gui2 import DataVisualizer2
 from gisto_gui import DataVisualizer3
 from diagram import DataVisualizer4
@@ -106,8 +105,6 @@ class mainwindow(QMainWindow):
                 QPushButton:hover {background-color: #B0C4DE;}
 
                 """)
-
-
 
 if __name__ == '__main__':
     app = QApplication([])
