@@ -1,4 +1,4 @@
-#РАБОЧАЯ ВЕРСИЯ ДЛЯ ДВУХ ГРАФИКОВ
+#РАБОЧАЯ ВЕРСИЯ ДЛЯ ГРАФИКОВ
 
 import sys
 from PyQt6.QtWidgets import *
