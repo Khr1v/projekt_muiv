@@ -1,13 +1,9 @@
 import sys
 from PyQt6.QtWidgets import *
-import matplotlib.pyplot as plt
-from PyQt6.QtGui import *
-from PyQt6.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import *
 import pandas as pd
-import numpy as np
-import matplotlib.ticker as  ticker
+
 
 class DataVisualizer4(QDialog):
     def __init__(self):
