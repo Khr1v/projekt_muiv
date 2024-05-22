@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QPushButton
 from PyQt6 import QtCore
-from venv3.gui2 import DataVisualizer2
+from gui2 import DataVisualizer2
 from gisto_gui import DataVisualizer3
 from diagram import DataVisualizer4
 
@@ -19,7 +19,7 @@ class mainwindow(QMainWindow):
         self.image_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.centralwidget = QWidget()
         self.setCentralWidget(self.centralwidget)
-        self.setStyleSheet("QMainWindow{border-image:url('заднийфон.png');}")
+        self.setStyleSheet("QMainWindow{border-image:url('backgroundBIG.png');}")
 
 
 
@@ -34,7 +34,7 @@ class mainwindow(QMainWindow):
         self.text = QLabel("Какой график хотите построить ? ")
         self.text.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
         self.text.setMaximumWidth(500)
-        self.text.setStyleSheet("""font-size: 20px; """)
+        self.text.setStyleSheet("""font-size: 20px; color: black;  """)
 
         layout = QVBoxLayout(self.centralWidget())
         layout.addWidget(self.text)
@@ -59,12 +59,12 @@ class mainwindow(QMainWindow):
         button1 = QPushButton('Линейный' , self)
         button1.setGeometry(100,70,300,100)
         button1.setStyleSheet("""
-                *{background-color: white;
-                color: black; 
-                border: 0.5px   solid grey;
+                *{background-color: rgba(255, 255, 255, 0);
+                color: white; 
+                border: 0.5px   solid black;
                 border-radius: 10px;} 
-                QPushButton:pressed {background-color: #87CEFA;}
-                QPushButton:hover {background-color: #B0C4DE;}
+                QPushButton:hover {background-color: rgba(152, 232, 250, 0.2);}              
+                QPushButton:pressed {background-color: rgba(54, 56, 56, 0.2);}            
                 
                 """)
         button1.clicked.connect(Twograph)
@@ -72,24 +72,24 @@ class mainwindow(QMainWindow):
         button2 = QPushButton('Гистограмма', self)
         button2.setGeometry(100,180,300,100)
         button2.setStyleSheet("""
-                *{background-color: white;
-                color: black; 
-                border: 0.5px   solid grey;
+                *{background-color: rgba(255, 255, 255, 0);
+                color: white; 
+                border: 0.5px   solid black;
                 border-radius: 10px;} 
-                QPushButton:pressed {background-color: #778899;}
-                QPushButton:hover {background-color: #B0C4DE;}
+                QPushButton:hover {background-color: rgba(152, 232, 250, 0.4);}              
+                QPushButton:pressed {background-color: rgba(54, 56, 56, 0.2);}
                 """)
         button2.clicked.connect(Gisto)
 
         button3 = QPushButton('Диаграмма', self)
         button3.setGeometry(100,290,300,100)
         button3.setStyleSheet("""
-                *{background-color: white;
-                color: black; 
-                border: 0.5px   solid grey;
+                *{background-color: rgba(255, 255, 255, 0);
+                color: white; 
+                border: 0.5px   solid black;
                 border-radius: 10px;} 
-                QPushButton:pressed {background-color: #778899;}
-                QPushButton:hover {background-color: #B0C4DE;}
+                QPushButton:hover {background-color: rgba(152, 232, 250, 0.3);}              
+                QPushButton:pressed {background-color: rgba(54, 56, 56, 0.2);}
 
                 """)
         button3.clicked.connect(Diagram)
@@ -98,11 +98,11 @@ class mainwindow(QMainWindow):
         button4.setGeometry(150,410,200,60)
         button4.setStyleSheet("""
                 *{background-color: rgba(255, 255, 255, 0);
-                color: black; 
+                color: white; 
                 border: 0.5px   solid grey;
                 border-radius: 10px;} 
-                QPushButton:pressed {background-color: #778899;}
-                QPushButton:hover {background-color: #B0C4DE;}
+                QPushButton:pressed {background-color: rgba(54, 56, 56, 0.3);}
+                QPushButton:hover {background-color:rgba(54, 56, 56, 0.5);}
 
                 """)
 

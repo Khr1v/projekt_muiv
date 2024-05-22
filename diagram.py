@@ -18,6 +18,8 @@ class DataVisualizer4(QDialog):
     def initUI(self):
         self.setWindowTitle("Диаграмма ")
         self.setGeometry(100, 100, 1420, 900)
+        self.setStyleSheet("QDialog{border-image:url('backgroundBIG.png');}")
+
 
         # Кнопки
         button = QPushButton("Построить Диаграму ", self)
@@ -27,24 +29,31 @@ class DataVisualizer4(QDialog):
         margin-left: auto;
         margin-right: auto;
         border-radius: 10px;}
+        QPushButton:hover {background-color: #e30e1b;}
         QPushButton:pressed {background-color: #800000;}""")
         button.setGeometry(500, 750, 240, 100)
         button.clicked.connect(self.plotGraph)
 
         button2 = QPushButton("Загрузить данные", self)
         button2.setStyleSheet("""
-        *{background-color: grey;
-        color: black; 
-        margin-left: auto;
-        margin-right: auto; 
-        border-radius: 10px;} 
-        QPushButton:pressed {background-color: #404040;}""")
+                *{background-color: #64818f;
+                color: black; 
+                margin-left: auto;
+                margin-right: auto; 
+                border-radius: 10px;} 
+                QPushButton:hover {background-color: #B0C4DE;}
+                QPushButton:pressed {background-color: #404040;}""")
         button2.setGeometry(700, 750, 220, 100)
         button2.clicked.connect(self.loadData)
 
         button3 = QPushButton("save⇩", self)
-        button3.setStyleSheet(""" *{background-color: grey; color: black;}""")
-        button3.setGeometry(30,150,48,48)
+        button3.setStyleSheet("""
+                                *{background-color: #afdef0;
+                                color: black; 
+                                border-radius: 5px;} 
+                                QPushButton:hover {background-color: #B0C4DE;}
+                                QPushButton:pressed {background-color: #404040;}""")
+        button3.setGeometry(30, 150, 48, 48)
         button3.clicked.connect(self.saveData)
 
         # Поле для ввода названия диаграммы
