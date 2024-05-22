@@ -1,0 +1,4 @@
+tbin/*
+.idea/*
+*.pyc
+*.DS_Store
