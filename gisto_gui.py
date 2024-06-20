@@ -9,6 +9,7 @@ from matplotlib.figure import *
 import pandas as pd
 import numpy as np
 import matplotlib.ticker as  ticker
+import json
 
 class DataVisualizer3(QDialog):
     def __init__(self):
@@ -59,15 +60,17 @@ class DataVisualizer3(QDialog):
         button3.setGeometry(30, 150, 48, 48)
         button3.clicked.connect(self.saveData)
 
-        # цветная кнопка
-        # color_button = QPushButton("Выбрать цвет линии", self)
-        # color_button.setGeometry(1100, 750, 150, 50)
-        # color_button.clicked.connect(self.chooseColor)
+
 
 
         grid_toggle = QCheckBox("Сетка выкл", self)
         grid_toggle.setGeometry(1300, 130, 100, 50)
         grid_toggle.stateChanged.connect(self.toggleGrid)
+
+        # названиe диаграммы
+        self.title_edit = QLineEdit(self)
+        self.title_edit.setGeometry(300, 750, 200, 30)
+        self.title_edit.setPlaceholderText("Название вашей гистограмы")
 
         # экран
         self.graphics_view = MatplotlibWidget(self)
@@ -77,11 +80,6 @@ class DataVisualizer3(QDialog):
     def toggleGrid(self, state):
             self.graphics_view.toggleGrid(state == Qt.CheckState.Checked)
 
-    # цветная кнопка функция
-    # def chooseColor(self):
-    #     color = QColorDialog.getColor(initial=QColor(self.line_color), parent=self)
-    #     if color.isValid():
-    #         self.line_color = color.name()
 
 
     def plotGraph(self):
@@ -94,7 +92,8 @@ class DataVisualizer3(QDialog):
             ylabel = self.data.columns[1]
 
             self.graphics_view.set_labels(xlabel, ylabel)
-            self.graphics_view.plot(perviy.iloc[:,0],perviy.iloc[:,1],  line_color=self.line_color)
+            title = self.title_edit.text()
+            self.graphics_view.plot(perviy.iloc[:,0],perviy.iloc[:,1],  line_color=self.line_color, title= title)
 
             print(perviy)
 
@@ -102,25 +101,52 @@ class DataVisualizer3(QDialog):
     def loadData(self):
         options = QFileDialog.Option.ReadOnly
         file_dialog = QFileDialog(self)
-        file_dialog.setNameFilter("CSV Files (*.csv);;All Files (*)")
-        file_path, _ = file_dialog.getOpenFileName(self, "Выберите файл", "", "Text Files (*.csv);;All Files (*)", options=options)
+        file_dialog.setNameFilter("CSV Files (*.csv);;JSON Files (*.json);;All Files (*)")
+        file_path, _ = file_dialog.getOpenFileName(self, "Выберите файл", "", "Text Files (*.csv);;JSON Files (*.json);;All Files (*)", options=options)
 
         if file_path:
-            self.data = pd.read_csv(file_path)
+            if file_path.endswith('.csv'):
+                self.data = pd.read_csv(file_path)
+            elif file_path.endswith('.json'):
+                self.loadJSONData(file_path)
+            self.plotGraph()
 
+    def loadJSONData(self, file_path):
+        with open(file_path, 'r') as f:
+            plot_data = json.load(f)
+            title = plot_data.get('title', '')
+            self.title_edit.setText(title)
 
+        labels = []
+        sizes = []
+
+        for entry in plot_data['data']:
+            labels.append(entry['label'])
+            sizes.append(entry['size'])
+
+        self.data = pd.DataFrame({'Label': labels, 'Size': sizes})
     def saveData(self):
-        options = QFileDialog.Option(QFileDialog.Option.ReadOnly)
-        file_dialog = QFileDialog(self)
-        file_dialog.setNameFilter("PNG files (*.png);; All Files(*)")
-        # file_path, _ = file_dialog.getSaveFileName(self,"PNG files (*.png);; All Files(*)", options=options)
-        file_path, _ = file_dialog.getSaveFileName(self, "Сохранить график", "", "PNG files (*.png);;All Files (*)",options=options)
+        save_options = "PNG Files (*.png);;JSON Files (*.json)"
+        save_path, _ = QFileDialog.getSaveFileName(self, "Сохранить данные", "", save_options)
+        if save_path:
+            if save_path.endswith('.png'):
+                self.graphics_view.figure.savefig(save_path, bbox_inches="tight")
+            elif save_path.endswith('.json'):
+                histo_data = {}
+                histo_data['data'] = []
+                histo_data['title'] = self.title_edit.text()
 
-        if file_path:
-            self.graphics_view.figure.savefig(file_path, format="png")
+                labels = self.data[self.data.columns[0]].tolist()
+                sizes = self.data[self.data.columns[1]].tolist()
+
+                for label, size in zip(labels, sizes):
+                    histo_data['data'].append({'label': label, 'size': size})
+
+                with open(save_path, 'w') as json_file:
+                    json.dump(histo_data, json_file, indent=4)
 
 
-    def gridview(self):
+def gridview(self):
         self.grid_enabled = not self.grid_enabled
         self.graphics_view.gridview(self.grid_enabled)
 
@@ -150,6 +176,7 @@ class MatplotlibWidget(FigureCanvas):
         max_value_y = np.max(y)
         max_value = max(max_value_x, max_value_y)
         bins = np.arange(1, max_value + 2) - 0.5
+        title = kwargs.get('title','')
 
         self.axes.clear()
 
@@ -168,7 +195,7 @@ class MatplotlibWidget(FigureCanvas):
         # Добавление легенды
         self.axes.legend(loc='upper right')
 
-        self.axes.set_title('Гистограмма данных')
+        self.axes.set_title(title)
         self.axes.set_xlabel(self.xlabel)
         self.axes.set_ylabel(self.ylabel)
 
