@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QPushButton
+from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QPushButton, QFileDialog
 from PyQt6 import QtCore
 from gui2 import DataVisualizer2
 from gisto_gui import DataVisualizer3
@@ -55,7 +55,16 @@ class mainwindow(QMainWindow):
         def Diagram():
             data_visulizer4 = DataVisualizer4()
             data_visulizer4.exec()
-#кнопки
+
+        def History():
+            options = QFileDialog.Option.ReadOnly
+            file_dialog = QFileDialog(self)
+            file_dialog.setNameFilter("JSON Files (*.json);")
+            directory = "/Users/ivanharitonov/Desktop/plot_data"
+            file_path, _ = file_dialog.getOpenFileName(self, "Выберите файл", directory,
+                                                       "JSON Files (*.json);;All Files (*)", options=options)
+
+        #кнопки
         button1 = QPushButton('Линейный' , self)
         button1.setGeometry(100,70,300,100)
         button1.setStyleSheet("""
@@ -105,6 +114,9 @@ class mainwindow(QMainWindow):
                 QPushButton:hover {background-color:rgba(54, 56, 56, 0.5);}
 
                 """)
+        button4.clicked.connect(History)
+
+ 
 
 if __name__ == '__main__':
     app = QApplication([])

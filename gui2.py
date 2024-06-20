@@ -2,7 +2,6 @@
 
 import sys
 from PyQt6.QtWidgets import *
-import matplotlib as plt
 from PyQt6.QtGui import *
 from PyQt6.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -24,7 +23,6 @@ class DataVisualizer2(QDialog):
     def initUI(self):
         self.setWindowTitle("Линейный  ")
         self.setGeometry(100, 100, 1420, 900)
-        # self.setStyleSheet("background-color: #e4edf5")
         self.setStyleSheet("QDialog{border-image:url('backgroundBIG.png');}")
 
 
@@ -106,32 +104,28 @@ class DataVisualizer2(QDialog):
         self.name_button1.setGeometry(200, 746, 120, 30)
         self.name_button1.setPlaceholderText("Название")
         self.name_button1.setStyleSheet("""*{ background : #2c363b} """)
-        # self.send_name_button1 = QPushButton("Отправить", self)
-        # self.send_name_button1.setGeometry(300, 743, 100, 27)
+
 
         self.name_button2 = QLineEdit(self)
         self.name_button2.setGeometry(200, 785, 120, 30)
         self.name_button2.setPlaceholderText("Линия 1")
         self.name_button2.setStyleSheet("""*{ background : #2c363b} """)
 
-        # self.send_name_button2 = QPushButton("Отправить", self)
-        # self.send_name_button2.setGeometry(300, 772, 100, 27)
+
 
         self.name_button3 = QLineEdit(self)
         self.name_button3.setGeometry(200, 815, 120, 30)
         self.name_button3.setPlaceholderText("Линия 2")
         self.name_button3.setStyleSheet("""*{ background : #2c363b} """)
 
-        # self.send_name_button3 = QPushButton("Отправить", self)
-        # self.send_name_button3.setGeometry(300, 792, 100, 27)
+
 
         self.name_button4 = QLineEdit(self)
         self.name_button4.setGeometry(200, 845, 120, 30)
         self.name_button4.setPlaceholderText("Линия 3")
         self.name_button4.setStyleSheet("""*{ background : #2c363b} """)
 
-        # self.send_name_button4 = QPushButton("Отправить", self)
-        # self.send_name_button4.setGeometry(300, 812, 100, 27)
+
 
 
         # экран
@@ -211,7 +205,7 @@ class DataVisualizer2(QDialog):
         num_columns = len(df.columns)
         for i in range(0, num_columns, 2):
             dataset = df.iloc[:, i:i + 2]
-            dataset.columns = ['X', 'Y']  # Rename columns to 'X' and 'Y'
+            dataset.columns = ['X', 'Y']
             self.data.append(dataset)
         print("Загруженные данные:")
         for dataset in self.data:
@@ -258,6 +252,8 @@ class DataVisualizer2(QDialog):
                 plot_data = {}
                 plot_data['title'] = self.name_button1.text()
                 plot_data['lines'] = []
+                plot_data['Type'] = ("Line")
+
                 for i, dataset in enumerate(self.data):
                     line_data = {}
                     line_data[f'X{i + 1}'] = dataset['X'].tolist()
@@ -268,6 +264,7 @@ class DataVisualizer2(QDialog):
                             self.name_button4.text() if i == 2 else ""
                     line_data['legend'] = legend
                     plot_data['lines'].append(line_data)
+                    # line_data['Type'] =("Line")
                 with open(save_path, 'w') as json_file:
                     json.dump(plot_data, json_file, indent=4)
 

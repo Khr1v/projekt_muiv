@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import *
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import *
 import pandas as pd
+import json
 
 
 class DataVisualizer4(QDialog):
@@ -76,27 +77,58 @@ class DataVisualizer4(QDialog):
     def loadData(self):
         options = QFileDialog.Option.ReadOnly
         file_dialog = QFileDialog(self)
-        file_dialog.setNameFilter("CSV Files (*.csv);;All Files (*)")
-        file_path, _ = file_dialog.getOpenFileName(self, "Выберите файл", "", "Text Files (*.csv);;All Files (*)", options=options)
+        file_dialog.setNameFilter("CSV Files (*.csv);;JSON Files (*.json);;All Files (*)")
+        file_path, _ = file_dialog.getOpenFileName(self, "Выберите файл", "","CSV Files (*.csv);;JSON Files (*.json);;All Files (*)",options=options)
 
         if file_path:
-            self.data = pd.read_csv(file_path)
+             if file_path.endswith('.csv'):
+                self.data = pd.read_csv(file_path)
+             elif file_path.endswith('.json'):
+                self.loadJSONData(file_path)
+             self.plotGraph()
 
+    def loadJSONData(self, file_path):
+        with open(file_path, 'r') as f:
+            plot_data = json.load(f)
+
+        diagram_name = plot_data['title']
+        self.diagram_name_edit.setText(diagram_name)
+
+        labels = []
+        sizes = []
+
+        for entry in plot_data['data']:
+            labels.append(entry['labels'])
+            sizes.append(entry['sizes'])
+
+        self.data = pd.DataFrame({'Label': labels, 'Size': sizes})
 
     def saveData(self):
-        options = QFileDialog.Option(QFileDialog.Option.ReadOnly)
-        file_dialog = QFileDialog(self)
-        file_dialog.setNameFilter("PNG files (*.png);; All Files(*)")
-        # file_path, _ = file_dialog.getSaveFileName(self,"PNG files (*.png);; All Files(*)", options=options)
-        file_path, _ = file_dialog.getSaveFileName(self, "Сохранить график", "", "PNG files (*.png);;All Files (*)",options=options)
+        save_options = "PNG Files (*.png);;JSON Files (*.json)"
+        save_path, _ = QFileDialog.getSaveFileName(self, "Сохранить данные", "", save_options)
+        if save_path:
+            if save_path.endswith('.png'):
+                self.graphics_view.figure.savefig(save_path, bbox_inches="tight")
+            elif save_path.endswith('.json'):
+                diag_data = {}
+                diag_data['title'] = self.diagram_name_edit.text()
+                diag_data['data'] = []
+                diag_data['Type'] = ("Diagram")
 
-        if file_path:
-            self.graphics_view.figure.savefig(file_path, format="png")
+                labels = self.data[self.data.columns[0]].tolist()
+                sizes = self.data[self.data.columns[1]].tolist()
+
+                for labels, sizes in zip(labels,sizes):
+                    diag_data['data'].append({'labels': labels, 'sizes': sizes})
+
+                with open(save_path, 'w') as json_file:
+                    json.dump(diag_data, json_file, indent=4 )
+
 
 
 class MatplotlibWidget(FigureCanvas):
     def __init__(self, parent=None):
-        fig = Figure(figsize=(20, 30))  # Установка желаемых размеров фигуры
+        fig = Figure(figsize=(20, 30))
         super().__init__(fig)
         self.setParent(parent)
         self.axes = fig.add_subplot(111)
@@ -105,7 +137,7 @@ class MatplotlibWidget(FigureCanvas):
         self.axes.clear()
         self.axes.pie(data, labels=labels, autopct='%1.1f%%', startangle=140)
         self.axes.axis('equal')  # Сделаем равные пропорции для осей, чтобы круг был кругом
-        self.axes.set_title(diagram_name)  # Установка названия диаграммы
+        self.axes.set_title(diagram_name)
         self.draw()
 
 if __name__ == '__main__':
