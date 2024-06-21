@@ -12,12 +12,15 @@ import json
 
 
 class DataVisualizer2(QDialog):
-    def __init__(self):
+    def __init__(self,data = None ):
         super().__init__()
         self.initUI()
         self.data = []
         self.grid_enabled = False
         self.line_colors = ['k', 'k','k']
+        if data:
+            self.loadJSONData(data)
+            self.plotGraph()
 
 
     def initUI(self):
@@ -186,16 +189,17 @@ class DataVisualizer2(QDialog):
         options = QFileDialog.Option.ReadOnly
         file_dialog = QFileDialog(self)
         file_dialog.setNameFilter("CSV Files (*.csv);;JSON Files (*.json);;All Files (*)")
-        file_path, _ = file_dialog.getOpenFileName(self, "Выберите файл", "",
-                                                   "Text Files (*.csv);;JSON Files (*.json);;All Files (*)",
-                                                   options=options)
+        file_path, _ = file_dialog.getOpenFileName(self, "Выберите файл", "","Text Files (*.csv);;JSON Files (*.json);;All Files (*)",options=options)
 
         if file_path:
             try:
                 if file_path.endswith('.csv'):
                     self.loadCSVData(file_path)
                 elif file_path.endswith('.json'):
-                    self.loadJSONData(file_path)
+                    with open(file_path, 'r') as f:
+                        plot_data = json.load(f)
+                    self.loadJSONData(plot_data)
+                self.plotGraph()
             except Exception as e:
                 QMessageBox.critical(self, "Ошибка", f"Не удалось загрузить данные из файла: {str(e)}")
 
@@ -212,9 +216,9 @@ class DataVisualizer2(QDialog):
             print(dataset.head())
 
 
-    def loadJSONData(self, file_path):
-        with open(file_path, 'r') as f:
-            plot_data = json.load(f)
+    def loadJSONData(self, plot_data):
+        # with open(file_path, 'r') as f:
+        #     plot_data = json.load(f)
 
         self.name_button1.setText(plot_data['title'])
         self.data.clear()
@@ -244,7 +248,8 @@ class DataVisualizer2(QDialog):
 
     def saveData(self):
         save_options = "PNG Files (*.png);;JSON Files (*.json)"
-        save_path, _ = QFileDialog.getSaveFileName(self, "Сохранить данные", "", save_options)
+        directory = "/Users/ivanharitonov/Desktop/plot_data"
+        save_path, _ = QFileDialog.getSaveFileName(self, "Сохранить данные", directory, save_options)
         if save_path:
             if save_path.endswith('.png'):
                 self.graphics_view.figure.savefig(save_path, bbox_inches="tight")
@@ -281,6 +286,7 @@ class MatplotlibWidget(FigureCanvas):
         self.figure.set_size_inches(20, 30)
         self.setParent(parent)
         self.axes = fig.add_subplot(111)
+        self.plot()
 
 
 

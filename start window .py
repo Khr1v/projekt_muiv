@@ -1,9 +1,9 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QPushButton, QFileDialog
+from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QPushButton, QFileDialog, QMessageBox
 from PyQt6 import QtCore
 from gui2 import DataVisualizer2
 from gisto_gui import DataVisualizer3
 from diagram import DataVisualizer4
-
+import json
 
 class mainwindow(QMainWindow):
     def __init__(self):
@@ -63,6 +63,33 @@ class mainwindow(QMainWindow):
             directory = "/Users/ivanharitonov/Desktop/plot_data"
             file_path, _ = file_dialog.getOpenFileName(self, "Выберите файл", directory,
                                                        "JSON Files (*.json);;All Files (*)", options=options)
+
+            if file_path:
+                try:
+                    with open(file_path, 'r') as f:
+                        plot_data = json.load(f)
+                        file_type = plot_data.get("Type", None)
+                        print(f"Read JSON data: {plot_data}")
+                        print(f"File type: {file_type}")
+
+                        if file_type is None:
+                            QMessageBox.warning(self, "Ошибка", "Неверный формат JSON файла.")
+                        elif file_type == 'Line':
+                            data_visualizer2 = DataVisualizer2(data= plot_data)
+                            data_visualizer2.exec()
+                        elif file_type == 'Histogram':
+                            data_visualizer3 = DataVisualizer3(data= plot_data)
+                            data_visualizer3.exec()
+                        elif file_type == 'Diagram':
+                            data_visulizer4 = DataVisualizer4(data=plot_data)
+                            data_visulizer4.exec()
+                        else:
+                            QMessageBox.warning(self, "Ошибка", "Неподдерживаемый тип графика.")
+                except json.JSONDecodeError:
+                    QMessageBox.warning(self, "Ошибка", "Ошибка при чтении JSON файла.")
+                except Exception as e:
+                    QMessageBox.warning(self, "Ошибка", f"Произошла ошибка: {str(e)}")
+
 
         #кнопки
         button1 = QPushButton('Линейный' , self)

@@ -12,12 +12,15 @@ import matplotlib.ticker as  ticker
 import json
 
 class DataVisualizer3(QDialog):
-    def __init__(self):
+    def __init__(self, data= None):
         super().__init__()
         self.initUI()
         self.data = None
         self.grid_enabled = False
         self.line_color = 'k'
+        if data:
+            self.loadJSONData(data)
+            self.plotGraph()
 
 
     def initUI(self):
@@ -108,14 +111,16 @@ class DataVisualizer3(QDialog):
             if file_path.endswith('.csv'):
                 self.data = pd.read_csv(file_path)
             elif file_path.endswith('.json'):
-                self.loadJSONData(file_path)
+                with open(file_path, 'r') as f:
+                    plot_data = json.load(f)
+                self.loadJSONData(plot_data)
             self.plotGraph()
 
-    def loadJSONData(self, file_path):
-        with open(file_path, 'r') as f:
-            plot_data = json.load(f)
-            title = plot_data.get('title', '')
-            self.title_edit.setText(title)
+    def loadJSONData(self, plot_data):
+        # with open(file_path, 'r') as f:
+        #     plot_data = json.load(f)
+        title = plot_data.get('title', '')
+        self.title_edit.setText(title)
 
         labels = []
         sizes = []
@@ -127,7 +132,8 @@ class DataVisualizer3(QDialog):
         self.data = pd.DataFrame({'Label': labels, 'Size': sizes})
     def saveData(self):
         save_options = "PNG Files (*.png);;JSON Files (*.json)"
-        save_path, _ = QFileDialog.getSaveFileName(self, "Сохранить данные", "", save_options)
+        directory = "/Users/ivanharitonov/Desktop/plot_data"
+        save_path, _ = QFileDialog.getSaveFileName(self, "Сохранить данные", directory, save_options)
         if save_path:
             if save_path.endswith('.png'):
                 self.graphics_view.figure.savefig(save_path, bbox_inches="tight")
@@ -135,6 +141,7 @@ class DataVisualizer3(QDialog):
                 histo_data = {}
                 histo_data['data'] = []
                 histo_data['title'] = self.title_edit.text()
+                histo_data['Type'] = ("Histogram")
 
                 labels = self.data[self.data.columns[0]].tolist()
                 sizes = self.data[self.data.columns[1]].tolist()
